@@ -21,7 +21,7 @@ describe("User Management", () => {
   async function setupAll() {
     await act(() => {
       render(<UserManagement />);
-      getUsers.mockResolvedValue(users);
+      vi.mocked(getUsers).mockResolvedValue(users);
     });
     setupElements();
   }
@@ -303,11 +303,11 @@ describe("User Management", () => {
   it("should delete a user", async () => {
     await act(() => {
       render(<UserManagement />);
-      getUsers
+      vi.mocked(getUsers)
         .mockResolvedValueOnce(users)
         .mockResolvedValueOnce(users.filter((u) => u.id !== 2));
 
-      deleteUser.mockResolvedValue({
+        vi.mocked(deleteUser).mockResolvedValue({
         status: 200,
       });
     });
