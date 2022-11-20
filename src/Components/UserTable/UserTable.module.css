@@ -1,0 +1,30 @@
+.table {
+    min-height: 200px;
+}
+
+.row {
+    align-items: center;
+    box-shadow: 0px 0px 8px rgba(69, 69, 69, 0.3);
+    border-radius: 1rem;
+    margin: 1rem;
+    padding: 1em 1.5em;
+    gap: 1.5rem
+}
+
+.id {
+    font-weight: 600;
+}
+
+.username {
+    color: #c3c3c3;
+}
+
+.name, .lastname {
+    font-weight: 600;
+}
+
+.name, .username, .id, .lastname {
+    text-align: start;
+}
+
+
