@@ -1,7 +1,3 @@
-const getUsers = vi.fn();
-const deleteUser = vi.fn();
-const mockAddNotification = vi.fn()
-
 import {
   act,
   fireEvent,
@@ -10,38 +6,12 @@ import {
   screen,
   within,
 } from "@testing-library/react";
-import expectButtons, { assertUser } from "../utils/expectButtons";
+import expectButtons from "../utils/expectButtons";
 import UserManagement from "../Components/UserManagement";
 import { users } from "../../users-1668887829587.json";
 import { vi } from "vitest";
-
-vi.mock("react-notifications-component", async () => {
-  const module = await vi.importActual("react-notifications-component");
-  return {
-    ...module,
-    Store: {
-      addNotification: mockAddNotification,
-    },
-  };
-});
-
-vi.mock("../config/constants", async () => {
-  const module = await vi.importActual("../config/constants");
-  return {
-    ...module,
-    LIMIT: 2,
-  };
-});
-
-vi.mock("../services/user.service", async () => {
-  const module = await vi.importActual("../services/user.service");
-
-  return {
-    ...module,
-    getUsers: getUsers,
-    deleteUser: deleteUser,
-  };
-});
+import { deleteUser, getUsers } from "services/user.service";
+import { Store } from "react-notifications-component";
 
 describe("User Management", () => {
   let list;
@@ -62,6 +32,29 @@ describe("User Management", () => {
     nextButton = nav.querySelector("a[rel='Next']");
     previousButton = nav.querySelector("a[rel='Previous']");
   }
+
+  vi.mock("react-notifications-component", async () => {
+    const module = await vi.importActual("react-notifications-component");
+    return {
+      ...module,
+      Store: {
+        addNotification: vi.fn(),
+      },
+    };
+  });
+
+  vi.mock("../config/constants", async () => {
+    const module = await vi.importActual("../config/constants");
+    return {
+      ...module,
+      LIMIT: 2,
+    };
+  });
+
+  vi.mock("../services/user.service", () => ({
+    getUsers: vi.fn(),
+    deleteUser: vi.fn(),
+  }));
 
   it("should paginate a list of users", async () => {
     await setupAll();
@@ -439,22 +432,24 @@ describe("User Management", () => {
       list,
       nextButton,
       previousButton,
-    }).toBe({
-      users: [
-        {
-          id: 3,
-          name: "Esteban",
-          lastname: "Rodriguez",
-          username: "estebanquiro@gmail.com",
-          isAdmin: false,
-          isActive: true,
-          superAdmin: false,
-        },
-      ],
-      nextButtonEnabled: false,
-      previousButtonEnabled: true,
-    }).execute();
+    })
+      .toBe({
+        users: [
+          {
+            id: 3,
+            name: "Esteban",
+            lastname: "Rodriguez",
+            username: "estebanquiro@gmail.com",
+            isAdmin: false,
+            isActive: true,
+            superAdmin: false,
+          },
+        ],
+        nextButtonEnabled: false,
+        previousButtonEnabled: true,
+      })
+      .execute();
 
-    expect(mockAddNotification).toBeCalledTimes(1);
+    expect(Store.addNotification).toBeCalledTimes(1);
   });
 });
